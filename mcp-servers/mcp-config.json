@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "10x-genomics-scraper": {
+      "command": "python",
+      "args": [
+        "/Users/omersumer/Desktop/skills/10XGenomics_scraper/mcp-servers/10x-scraper/server.py"
+      ],
+      "env": {},
+      "description": "10X Genomics dataset scraper - extracts dataset metadata from the 10X Genomics website"
+    },
+    "10x-genomics-validator": {
+      "command": "python",
+      "args": [
+        "/Users/omersumer/Desktop/skills/10XGenomics_scraper/mcp-servers/10x-validator/server.py"
+      ],
+      "env": {},
+      "description": "10X Genomics data validator - validates scraped data for accuracy and consistency"
+    },
+    "10x-genomics-enricher": {
+      "command": "python",
+      "args": [
+        "/Users/omersumer/Desktop/skills/10XGenomics_scraper/mcp-servers/10x-enricher/server.py"
+      ],
+      "env": {},
+      "description": "10X Genomics metadata enricher - enriches datasets with additional metadata from detail pages"
+    }
+  }
+}

@@ -1,0 +1,81 @@
+# 10X Genomics Data Pipeline Configuration
+
+pipeline:
+  name: "10X Genomics Data Pipeline"
+  description: "Automated scraping and validation of 10X Genomics datasets"
+
+  # Run-specific parameters (can be overridden via command-line)
+  default_url: "https://www.10xgenomics.com/datasets?configure%5BhitsPerPage%5D=50&configure%5BmaxValuesPerFacet%5D=1000&query=Visium%20HD&refinementList%5Bplatform%5D%5B0%5D=Visium%20Spatial&refinementList%5Bproduct.name%5D%5B0%5D=HD%20Spatial%20Gene%20Expression&refinementList%5Bspecies%5D%5B0%5D=Human"
+  default_name: "10XGenomics-VisiumHD-Human"
+  base_output_dir: "./output"
+
+  # Agent definitions
+  agents:
+    # Scraper Agent: Extracts dataset information from 10X Genomics website
+    - name: scraper
+      script: skills/scraper/scraper.py
+      enabled: true
+      description: "Scrapes 10X Genomics datasets and outputs JSON + Excel"
+
+    # Validator Agent: Validates scraped data accuracy
+    - name: validator
+      script: skills/validator/validator.py
+      enabled: true
+      depends_on: scraper
+      description: "Validates data consistency and URL content"
+
+    # Metadata Enricher Agent: Extracts additional metadata from dataset detail pages
+    - name: metadata_enricher
+      script: skills/metadata_enricher/metadata_enricher.py
+      enabled: true
+      depends_on: validator
+      description: "Enriches datasets with imaging parameters and sample information"
+
+# Validation settings
+validation:
+  # Enable file consistency check (JSON vs Excel)
+  file_consistency: true
+
+  # Enable URL content verification
+  url_verification: true
+
+  # Maximum retries for failed URL validations
+  max_retries: 3
+
+  # Timeout for page loads (seconds)
+  timeout: 30
+
+  # Report output formats
+  report_format:
+    - json
+    - html
+
+# Enrichment settings
+enrichment:
+  # Enable metadata enrichment
+  enabled: true
+
+  # Maximum retries for failed page loads
+  max_retries: 3
+
+  # Timeout for page loads (seconds)
+  timeout: 30
+
+  # Number of parallel browser instances
+  parallel_workers: 3
+
+# Logging settings
+logging:
+  # Log directory (relative to project root)
+  directory: logs
+
+  # Log level (DEBUG, INFO, WARNING, ERROR)
+  level: INFO
+
+# Future expansion: Add more agents/skills here
+# Example:
+# - name: publisher
+#   script: skills/publisher/publisher.py
+#   enabled: false
+#   depends_on: validator
+#   description: "Publishes validated data to external systems"
