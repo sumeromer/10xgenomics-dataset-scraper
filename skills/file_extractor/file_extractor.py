@@ -590,20 +590,6 @@ def main():
     # Print summary
     extractor.print_summary()
 
-    # Update timestamp file
-    try:
-        from datetime import datetime
-        # Get the output directory (parent of enriched directory)
-        output_dir = json_path.parent.parent
-        timestamp_file = output_dir / 'timestamp.txt'
-        with open(timestamp_file, 'a') as f:
-            # Match format of other agents: "agent_name\t\tYYYY-MM-DD HH:MM:SS\n"
-            timestamp_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            f.write(f"file_extractor      \t{timestamp_str}\n")
-        print(f"✓ Timestamp updated: {timestamp_file}", file=sys.stderr)
-    except Exception as e:
-        print(f"⚠ Warning: Could not update timestamp: {e}", file=sys.stderr)
-
     # Exit code
     if extractor.stats["failed"] > 0 or extractor.stats["partial"] > 0:
         print(f"\n⚠ Partial success: {extractor.stats['failed']} failed, {extractor.stats['partial']} partial", file=sys.stderr)

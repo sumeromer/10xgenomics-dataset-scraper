@@ -117,7 +117,7 @@ class PipelineOrchestrator:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         # Define all possible tasks
-        all_tasks = ['scraper', 'validator', 'metadata-enricher']
+        all_tasks = ['scraper', 'validator', 'metadata-enricher', 'file-extractor']
 
         # Read existing timestamps or initialize
         timestamps = {}
@@ -234,6 +234,10 @@ class PipelineOrchestrator:
             elif process.returncode == 1:
                 result['status'] = 'failed'
                 self.log(f"\n✗ Agent {agent_name} failed with validation errors")
+
+                # Update timestamp for partial completion (exit code 1 = validation errors but work completed)
+                timestamp_task_name = agent_name.replace('_', '-')
+                self.update_timestamp(timestamp_task_name)
             else:
                 result['status'] = 'error'
                 self.log(f"\n✗ Agent {agent_name} encountered a critical error (exit code: {process.returncode})")
