@@ -29,7 +29,7 @@ from tqdm import tqdm
 class MetadataEnricher:
     """Enriches dataset information with additional metadata from detail pages."""
 
-    def __init__(self, json_path, excel_path, output_dir, max_retries=3, timeout=30, max_workers=3):
+    def __init__(self, json_path, excel_path, output_dir, name, max_retries=3, timeout=30, max_workers=3):
         """
         Initialize the enricher.
 
@@ -37,6 +37,7 @@ class MetadataEnricher:
             json_path: Path to input JSON file
             excel_path: Path to input Excel file
             output_dir: Directory for enriched output files
+            name: Run identifier for output filenames
             max_retries: Maximum retries for failed page loads
             timeout: Timeout for page loads in seconds
             max_workers: Number of parallel browser instances
@@ -44,6 +45,7 @@ class MetadataEnricher:
         self.json_path = Path(json_path)
         self.excel_path = Path(excel_path)
         self.output_dir = Path(output_dir)
+        self.name = name
         self.max_retries = max_retries
         self.timeout = timeout
         self.max_workers = max_workers
@@ -542,13 +544,13 @@ class MetadataEnricher:
         print("="*60, file=sys.stderr)
 
         # Save JSON
-        json_output_path = self.output_dir / "Data-10XGenomics-VisiumHD-Human-Enriched.json"
+        json_output_path = self.output_dir / f"Data-{self.name}-Enriched.json"
         with open(json_output_path, 'w', encoding='utf-8') as f:
             json.dump(enriched_datasets, f, indent=2, ensure_ascii=False)
         print(f"✓ JSON saved to: {json_output_path}", file=sys.stderr)
 
         # Save Excel
-        excel_output_path = self.output_dir / "Data-10XGenomics-VisiumHD-Human-Enriched.xlsx"
+        excel_output_path = self.output_dir / f"Data-{self.name}-Enriched.xlsx"
         df = pd.DataFrame(enriched_datasets)
 
         # Reorder columns for better readability
@@ -636,7 +638,7 @@ def main():
     print("="*60, file=sys.stderr, flush=True)
 
     # Initialize enricher
-    enricher = MetadataEnricher(json_path, excel_path, output_dir, args.max_retries, args.timeout, args.parallel)
+    enricher = MetadataEnricher(json_path, excel_path, output_dir, args.name, args.max_retries, args.timeout, args.parallel)
 
     # Load input data
     if not enricher.load_input_data():

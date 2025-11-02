@@ -196,10 +196,12 @@ class PipelineOrchestrator:
             cmd = [sys.executable, str(script_path)]
 
             # Add common parameters for all agents
+            # Convert to absolute path to avoid issues with cwd changes
+            abs_output_dir = str(self.base_output_dir.resolve())
             if agent_name == 'scraper':
-                cmd.extend(['--url', self.url, '--name', self.name, '--base-output-dir', str(self.base_output_dir)])
-            elif agent_name in ['validator', 'metadata_enricher']:
-                cmd.extend(['--name', self.name, '--base-output-dir', str(self.base_output_dir)])
+                cmd.extend(['--url', self.url, '--name', self.name, '--base-output-dir', abs_output_dir])
+            elif agent_name in ['validator', 'metadata_enricher', 'file_extractor']:
+                cmd.extend(['--name', self.name, '--base-output-dir', abs_output_dir])
 
             # Run the agent script with real-time output streaming
             # This allows progress bars and live updates to display properly
@@ -260,6 +262,11 @@ class PipelineOrchestrator:
         self.log(f"PIPELINE: {self.config['pipeline']['name']}")
         self.log(f"Started: {self.timestamp}")
         self.log("="*60)
+
+        # Create output directory structure before running any agents
+        output_run_dir = self.base_output_dir / self.name
+        output_run_dir.mkdir(parents=True, exist_ok=True)
+        self.log(f"✓ Output directory: {output_run_dir}")
 
         agents = self.config['pipeline']['agents']
         overall_success = True

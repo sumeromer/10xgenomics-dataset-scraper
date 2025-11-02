@@ -31,6 +31,13 @@ pipeline:
       depends_on: validator
       description: "Enriches datasets with imaging parameters and sample information"
 
+    # File Extractor Agent: Extracts file download links and metadata
+    - name: file_extractor
+      script: skills/file_extractor/file_extractor.py
+      enabled: true
+      depends_on: metadata_enricher
+      description: "Extracts file download links, sizes, and MD5 checksums"
+
 # Validation settings
 validation:
   # Enable file consistency check (JSON vs Excel)
@@ -63,6 +70,17 @@ enrichment:
 
   # Number of parallel browser instances
   parallel_workers: 3
+
+# File extraction settings
+file_extraction:
+  # Enable file extraction
+  enabled: true
+
+  # Maximum retries for failed page loads
+  max_retries: 3
+
+  # Timeout for page loads (seconds)
+  timeout: 30
 
 # Logging settings
 logging:

@@ -441,7 +441,7 @@ def main():
 
     url = args.url
     name = args.name
-    base_output_dir = "/Users/omersumer/Desktop/skills/10XGenomics_scraper/output" # args.base_output_dir
+    base_output_dir = args.base_output_dir
 
     # Ensure directories exist
     input_dir, output_dir = ensure_directories(base_output_dir, name)
